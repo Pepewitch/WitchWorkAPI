@@ -1,0 +1,29 @@
+{
+  "name": "functions",
+  "scripts": {
+    "lint": "tslint --project tsconfig.json",
+    "build": "tsc",
+    "serve": "npm run build && firebase serve --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "watch-ts": "tsc -w --preserveWatchOutput",
+    "watch-node": "firebase serve --only functions",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
+  },
+  "main": "dist/index.js",
+  "dependencies": {
+    "@google-cloud/firestore": "^0.19.0",
+    "express": "^4.16.4",
+    "firebase-admin": "^6.0.0",
+    "firebase-functions": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "concurrently": "^4.1.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.2"
+  },
+  "private": true
+}
