@@ -74,3 +74,6 @@ typings/
 # npm / yarn
 package-lock.json
 yarn.lock
+
+# compiler output
+dist
