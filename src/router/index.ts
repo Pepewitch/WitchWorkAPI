@@ -36,10 +36,20 @@ api.get('/embedded', async (req, res) => {
 api.post('/embedded/open/:doorID', async (req, res) => {
   const doorID = req.params['doorID'];
   try {
-    await realtime_database.ref(`embedded/${doorID}`).update({
+    const update_status = realtime_database.ref(`embedded/${doorID}`).update({
       status: 'open',
       action: 'wait',
     });
+    const update_transaction = realtime_database
+      .ref(`embedded_transactions`)
+      .push({
+        doorID,
+        status: 'open',
+        action: 'wait',
+        createdAt: new Date(),
+        from: 'Embedded system',
+      });
+    await Promise.all([update_status, update_transaction]);
     res.sendStatus(200);
   } catch (error) {
     res.sendStatus(500);
@@ -49,10 +59,20 @@ api.post('/embedded/open/:doorID', async (req, res) => {
 api.post('/embedded/close/:doorID', async (req, res) => {
   const doorID = req.params['doorID'];
   try {
-    await realtime_database.ref(`embedded/${doorID}`).update({
+    const update_status = realtime_database.ref(`embedded/${doorID}`).update({
       status: 'close',
       action: 'wait',
     });
+    const update_transaction = realtime_database
+      .ref(`embedded_transactions`)
+      .push({
+        doorID,
+        status: 'close',
+        action: 'wait',
+        createdAt: new Date(),
+        from: 'Embedded system',
+      });
+    await Promise.all([update_status, update_transaction]);
     res.sendStatus(200);
   } catch (error) {
     res.sendStatus(500);
