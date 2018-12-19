@@ -48,7 +48,14 @@ embedded.post('/open/:doorID', async (req, res) => {
     return res.status(400).send({ error: 'Invalid doorID' });
   }
   try {
-    const condition = (await fs.doc(doorID).get()).data();
+    const snapshot = await fs.doc(doorID).get();
+    let condition;
+    if (snapshot.exists) {
+      condition = snapshot.data();
+    } else {
+      condition = { from: null, to: null, whitelist: false };
+      await fs.doc(doorID).set(condition);
+    }
     const update_value = checkWhitelist(condition)
       ? {
           status: 'open',
@@ -82,7 +89,14 @@ embedded.post('/close/:doorID', async (req, res) => {
     return res.status(400).send({ error: 'Invalid doorID' });
   }
   try {
-    const condition = (await fs.doc(doorID).get()).data();
+    const snapshot = await fs.doc(doorID).get();
+    let condition;
+    if (snapshot.exists) {
+      condition = snapshot.data();
+    } else {
+      condition = { from: null, to: null, whitelist: false };
+      await fs.doc(doorID).set(condition);
+    }
     const update_value = checkWhitelist(condition)
       ? {
           status: 'close',
