@@ -10,6 +10,9 @@ const getTime = time => {
 };
 
 const checkWhitelist = condition => {
+  if (!condition) {
+    return false;
+  }
   if (condition.whitelist) {
     return true;
   } else if (condition.from && condition.to) {
@@ -46,7 +49,6 @@ embedded.post('/open/:doorID', async (req, res) => {
   }
   try {
     const condition = (await fs.doc(doorID).get()).data();
-    console.log(condition);
     const update_value = checkWhitelist(condition)
       ? {
           status: 'open',
@@ -56,7 +58,6 @@ embedded.post('/open/:doorID', async (req, res) => {
           status: 'open',
           action: 'wait',
         };
-    console.log(update_value);
     const update_status = realtime_database
       .ref(`embedded/${doorID}`)
       .update(update_value);
