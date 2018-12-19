@@ -33,9 +33,9 @@ embedded.get('/', async (req, res) => {
         items.push(element);
       }
     }
-    res.status(200).send({ items });
+    return res.status(200).send({ items });
   } catch (error) {
-    res.status(500).send({ error });
+    return res.status(500).send({ error });
   }
 });
 
@@ -69,9 +69,9 @@ embedded.post('/open/:doorID', async (req, res) => {
         from: 'Embedded system',
       });
     await Promise.all([update_status, update_transaction]);
-    res.sendStatus(200);
+    return res.sendStatus(200);
   } catch (error) {
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 });
 
@@ -103,9 +103,9 @@ embedded.post('/close/:doorID', async (req, res) => {
         from: 'Embedded system',
       });
     await Promise.all([update_status, update_transaction]);
-    res.sendStatus(200);
+    return res.sendStatus(200);
   } catch (error) {
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 });
 
