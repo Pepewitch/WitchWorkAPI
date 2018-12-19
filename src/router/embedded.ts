@@ -40,7 +40,10 @@ embedded.get('/', async (req, res) => {
 });
 
 embedded.post('/open/:doorID', async (req, res) => {
-  const doorID = req.params['doorID'];
+  const doorID = req.params['doorID'].trim() as string;
+  if (doorID.length === 0) {
+    return res.status(400).send({ error: 'Invalid doorID' });
+  }
   try {
     const condition = (await fs.doc(doorID).get()).data();
     console.log(condition);
@@ -74,6 +77,9 @@ embedded.post('/open/:doorID', async (req, res) => {
 
 embedded.post('/close/:doorID', async (req, res) => {
   const doorID = req.params['doorID'];
+  if (doorID.length === 0) {
+    return res.status(400).send({ error: 'Invalid doorID' });
+  }
   try {
     const condition = (await fs.doc(doorID).get()).data();
     const update_value = checkWhitelist(condition)
@@ -85,7 +91,9 @@ embedded.post('/close/:doorID', async (req, res) => {
           status: 'close',
           action: 'wait',
         };
-    const update_status = realtime_database.ref(`embedded/${doorID}`).update(update_value);
+    const update_status = realtime_database
+      .ref(`embedded/${doorID}`)
+      .update(update_value);
     const update_transaction = realtime_database
       .ref(`embedded_transactions/${doorID}`)
       .push({
