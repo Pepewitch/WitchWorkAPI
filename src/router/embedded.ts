@@ -9,6 +9,13 @@ const getTime = time => {
   return time.hour() * 3600 + time.minute() * 60 + time.second();
 };
 
+const checkExist = async doorID => {
+  const snapshot = await realtime_database
+    .ref(`embedded/${doorID}`)
+    .once('value');
+  return snapshot.exists();
+};
+
 const checkWhitelist = condition => {
   if (!condition) {
     return false;
@@ -38,12 +45,17 @@ embedded.get('/', async (req, res) => {
     }
     return res.status(200).send({ items });
   } catch (error) {
+    console.error(error);
     return res.status(500).send({ error });
   }
 });
 
 embedded.post('/open/:doorID', async (req, res) => {
   const doorID = req.params['doorID'].trim() as string;
+  const exist = await checkExist(doorID);
+  if (!exist) {
+    return res.sendStatus(404);
+  }
   if (doorID.length === 0) {
     return res.status(400).send({ error: 'Invalid doorID' });
   }
@@ -65,6 +77,7 @@ embedded.post('/open/:doorID', async (req, res) => {
           status: 'open',
           action: 'wait',
         };
+
     const update_status = realtime_database
       .ref(`embedded/${doorID}`)
       .update(update_value);
@@ -79,12 +92,17 @@ embedded.post('/open/:doorID', async (req, res) => {
     await Promise.all([update_status, update_transaction]);
     return res.sendStatus(200);
   } catch (error) {
+    console.error(error);
     return res.sendStatus(500);
   }
 });
 
 embedded.post('/close/:doorID', async (req, res) => {
   const doorID = req.params['doorID'];
+  const exist = await checkExist(doorID);
+  if (!exist) {
+    return res.sendStatus(404);
+  }
   if (doorID.length === 0) {
     return res.status(400).send({ error: 'Invalid doorID' });
   }
@@ -120,6 +138,7 @@ embedded.post('/close/:doorID', async (req, res) => {
     await Promise.all([update_status, update_transaction]);
     return res.sendStatus(200);
   } catch (error) {
+    console.error(error);
     return res.sendStatus(500);
   }
 });
