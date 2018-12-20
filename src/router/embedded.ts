@@ -59,7 +59,7 @@ embedded.post('/open/:doorID', async (req, res) => {
     const update_value = checkWhitelist(condition)
       ? {
           status: 'open',
-          action: 'dismiss',
+          action: 'ring',
         }
       : {
           status: 'open',
@@ -100,7 +100,7 @@ embedded.post('/close/:doorID', async (req, res) => {
     const update_value = checkWhitelist(condition)
       ? {
           status: 'close',
-          action: 'dismiss',
+          action: 'wait',
         }
       : {
           status: 'close',
